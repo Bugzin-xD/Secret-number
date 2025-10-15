@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let tentativas = 0;
     let jogoAtivo = true;
 
-    // Configurações para a nova guia
+    // Configurações para a nova guia (Lobby)
     const URL_PARA_ABRIR = 'lobby.html'; 
     const TEMPO_ESPERA_MS = 5000; // 5 segundos
 
@@ -16,6 +16,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.appendChild(resultadoDisplay);
     }
     resultadoDisplay.textContent = "Tente adivinhar o número entre 1 e 100!";
+
+
+    // --- FUNÇÃO AUXILIAR PARA A CONTGAGEM REGRESSIVA ---
+    // Usamos uma função para não repetir o código da contagem regressiva.
+    function iniciarContagemRegressiva(mensagemInicial) {
+        let segundosRestantes = TEMPO_ESPERA_MS / 1000;
+        
+        // MENSAGEM INICIAL
+        resultadoDisplay.textContent = `${mensagemInicial} Voltando ao lobby em ${segundosRestantes} segundos...`;
+
+        const intervalo = setInterval(() => {
+            segundosRestantes--; // Decrementa o contador
+            
+            // ATUALIZA A ESCRITA a cada segundo
+            resultadoDisplay.textContent = `${mensagemInicial} Voltando ao lobby em ${segundosRestantes} segundos...`;
+            
+            // Verifica se o tempo acabou
+            if (segundosRestantes <= 0) {
+                clearInterval(intervalo); // Pára o setInterval
+                
+                resultadoDisplay.textContent = `Abrindo lobby agora...`; // Última atualização
+                
+                // EXECUTA A AÇÃO FINAL (Redirecionamento)
+                window.location.href = URL_PARA_ABRIR; 
+            }
+        }, 1000); // 1000 milissegundos = 1 segundo de intervalo
+
+        jogoAtivo = false; // Encerra o loop do jogo principal
+    }
+    // ----------------------------------------------------
 
 
     // 2. Loop principal do jogo usando SweetAlert2
@@ -48,44 +78,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         // -----------------------------------------------------------------
-        // TRATAMENTO PARA O BOTÃO "ENCERRAR JOGO" (Abertura de Guia)
+        // TRATAMENTO PARA O BOTÃO "ENCERRAR JOGO" (Contagem Regressiva)
         // -----------------------------------------------------------------
- if (result.dismiss === Swal.DismissReason.cancel || result.dismiss === Swal.DismissReason.close) {
-    
-    // VARIÁVEL DE CONTADOR: Inicia com o valor do tempo de espera em segundos (5)
-    let segundosRestantes = TEMPO_ESPERA_MS / 1000; 
-    
-    // MENSAGEM INICIAL
-    resultadoDisplay.textContent = `Jogo encerrado, o número era ${NUMERO_SECRETO}. Voltando ao lobby em ${segundosRestantes} segundos...`;
-
-    // 1. Usa setInterval para REPETIR a atualização a cada 1000ms (1 segundo)
-    const intervalo = setInterval(() => {
-        
-        segundosRestantes--; // Decrementa o contador
-        
-        // 2. ATUALIZA A ESCRITA a cada segundo
-        resultadoDisplay.textContent = `Jogo encerrado, o número era ${NUMERO_SECRETO}. Voltando ao lobby em ${segundosRestantes} segundos...`;
-        
-        // 3. Verifica se o tempo acabou
-        if (segundosRestantes <= 0) {
-            clearInterval(intervalo); // Pára o setInterval
+        if (result.dismiss === Swal.DismissReason.cancel || result.dismiss === Swal.DismissReason.close) {
             
-            resultadoDisplay.textContent = `Abrindo lobby agora...`; // Última atualização
-            setInterval(2000);
-            // EXECUTA A AÇÃO FINAL
-            // Como você quer que abra na mesma guia, usamos window.location.href
-            window.location.href = URL_PARA_ABRIR; 
-            
-            // Não é necessário window.location.reload() pois o href já redireciona a página.
+            const mensagem = `Jogo encerrado, o número era ${NUMERO_SECRETO}.`;
+            iniciarContagemRegressiva(mensagem); 
+            break; 
         }
-    }, 1000); // 1000 milissegundos = 1 segundo de intervalo
-
-    jogoAtivo = false; // Encerra o loop do jogo principal
-    break; 
-}
-
-        // -----------------------------------------------------------------
-
 
         // Se o modal foi fechado sem um palpite válido após confirmação, continua no loop
         const palpiteInput = result.value; 
@@ -99,19 +99,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 3. Lógica de Verificação
         if (palpite === NUMERO_SECRETO) {
             // ACERTOU
-            resultadoDisplay.textContent = `🎉 Parabéns! Você acertou o número ${NUMETO_SECRETO} em ${tentativas} tentativas!`;
             
-            await Swal.fire({
-                title: 'Parabéns!',
+            // 1. Mostra o modal de Parabéns (o usuário clica OK)
+            const sucessoResult = await Swal.fire({
+                title: '🎉 Parabéns!',
                 text: `Você acertou em ${tentativas} tentativas!`,
                 icon: 'success',
-                confirmButtonText: 'Jogar Novamente',
+                confirmButtonText: 'Continuar',
                 allowOutsideClick: false,
-            }).then((reloadResult) => {
-                if (reloadResult.isConfirmed) {
-                    window.location.reload(); 
-                }
             });
+
+            if (sucessoResult.isConfirmed) {
+                const mensagem = `🎉 Parabéns! O número era ${NUMERO_SECRETO}.`;
+                iniciarContagemRegressiva(mensagem);
+            }
 
             jogoAtivo = false;
         } else if (palpite < NUMERO_SECRETO) {
