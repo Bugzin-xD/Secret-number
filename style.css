@@ -1,0 +1,68 @@
+body {
+    background-image: url(Background.png);
+    background-repeat: no-repeat;
+}
+
+a {
+    text-decoration: none;
+    padding: 3px;
+    color: black;
+    background-color: rgb(196, 146, 8);
+    border: 1.5px solid black;
+    border-radius: 10px;
+    position: absolute;
+    top: 500px;
+    left: 563px;
+    transition: ease-in 0.5s, ease 0.5s, ease-out 0.5s;
+    font-size: 50px;
+    font-family: 'Poppins', sans-serif, serif, 'Roboto', sans-serif, serif, 'Trebuchet MS', sans-serif, serif;
+}
+
+a:hover {
+    transition: ease-in 0.5s, ease 0.5s, ease-out 0.5s;
+    background-color:rgb(206, 151, 0);
+   transform: translateY(-3px);
+   
+}
+
+.meu-modal-adivinha {
+    font-family: cursive;
+    border: 3px solid rgb(196, 146, 8) !important;
+    border-radius: 15px !important;
+    box-shadow: 0 4px 15px rgba(250, 248, 248, 0.2);
+     background-color: #010029; 
+}
+
+.meu-botao-confirmar {
+    background-color: rgb(196, 146, 8) !important; 
+    color: #010029 !important;
+    font-weight: bold !important;
+    border: none !important;
+    transition: background-color 0.3s;
+}
+
+.meu-botao-confirmar:hover {
+    background-color: rgb(206, 151, 0) !important;
+}
+
+.swal2-input {
+    border: 2px solid #0300a5 !important;
+    border-radius: 5px !important;
+    font-size: 1.1em !important;
+    text-align: center !important;
+}
+
+/* Estilo para o botão Cancelar/Encerrar */
+.meu-botao-cancelar {
+    /* Cor de fundo mais neutra ou de perigo */
+    background-color: #6c757d !important; 
+    color: white !important;
+    font-weight: bold !important;
+    border: none !important;
+    margin-right: 15px !important; /* Afasta um pouco do botão principal */
+    transition: background-color 0.3s;
+}
+
+.meu-botao-cancelar:hover {
+    background-color: #5a6268 !important;
+}
